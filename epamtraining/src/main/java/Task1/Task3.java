@@ -1,3 +1,5 @@
+package Task1;
+
 public class Task3 {
 
     public static void main(String[] args) {
@@ -8,8 +10,8 @@ public class Task3 {
         task.printFunctionResult(start,finish,step);
     }
 
-    public void printFunctionResult(double start, double finish, double step){
-        double result = 0;
+    private void printFunctionResult(double start, double finish, double step){
+        double result;
         for(; start<=finish; start+=step) {
             result = Math.tan(2 * start) - 3;
             System.out.println("Argument value: " + start + "\t" + "Fuction value: " + result);

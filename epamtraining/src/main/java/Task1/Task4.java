@@ -1,3 +1,5 @@
+package Task1;
+
 import java.util.Arrays;
 
 public class Task4 {
@@ -12,7 +14,7 @@ public class Task4 {
         System.out.println(maxValue);
     }
 
-    public int[] getFilledArray(int initArraySize){
+    private int[] getFilledArray(int initArraySize){
         int[] initialNumbers = new int[initArraySize];
         for (int i = 0; i < initialNumbers.length; i++) {
             initialNumbers[i] = (int) (Math.random() * 100);
@@ -20,7 +22,7 @@ public class Task4 {
         return initialNumbers;
     }
 
-    public int[] getSumNumbers(int[] initialNumbers){
+    private int[] getSumNumbers(int[] initialNumbers){
         int[] sumNumbers = new int[30];
         for (int i = 0; i < initialNumbers.length; i++) {
             sumNumbers[i] = initialNumbers[initialNumbers.length - i - 1] + initialNumbers[i];
@@ -28,9 +30,8 @@ public class Task4 {
         return sumNumbers;
     }
 
-    public int getArrayMaxValue(int[] sumNumbers){
+    private int getArrayMaxValue(int[] sumNumbers){
         Arrays.sort(sumNumbers);
-        int maxValue = sumNumbers[sumNumbers.length - 1];
-        return maxValue;
+        return sumNumbers[sumNumbers.length - 1];
     }
 }
