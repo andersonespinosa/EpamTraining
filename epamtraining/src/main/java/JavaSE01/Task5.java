@@ -1,4 +1,4 @@
-package Task1;
+package JavaSE01;
 
 public class Task5 {
     public static void main(String[] args) {
