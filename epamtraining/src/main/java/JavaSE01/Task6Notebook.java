@@ -63,6 +63,9 @@ public class Task6Notebook {
         }
     }
 
+    /**
+     * Returns new array with bigger capacity when needed
+     */
     private Object[] increaseArrayCapacity(Object[] notes){
             Object[] newNotes = new Object[notes.length * 2];
             System.arraycopy(notes, 0, newNotes, 0, notes.length);
