@@ -1,22 +1,26 @@
 package JavaSE02.Task5;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 
 public class Student<T extends Number> {
     private String name;
     private int id;
-    private EnumMap<Subjects, T> subjectsToMarks;
+    private EnumMap<Subjects, List<T>> subjectsToMarks = new EnumMap<>(Subjects.class);
 
-    public void getMarksBySubject(Subjects subject) {
-        subjectsToMarks.get(subject);
+    public List<T> getMarksBySubject(Subjects subject) {
+        return subjectsToMarks.get(subject);
     }
 
     public void setMarkBySubject(Subjects subject, T mark) {
-        subjectsToMarks.put(subject, mark);
+        if(!subjectsToMarks.containsKey(subject)){
+            subjectsToMarks.put(subject, new ArrayList<>());
+        }
+        subjectsToMarks.get(subject).add(mark);
     }
 
     public String getName() {
-
         return name;
     }
 
@@ -25,12 +29,10 @@ public class Student<T extends Number> {
     }
 
     public int getId() {
-
         return id;
     }
 
     public void setId(int id) {
-
         this.id = id;
     }
 }
