@@ -20,12 +20,7 @@ public class StudyGroup<T extends Number> {
         students.remove(student);
     }
 
-    public Optional<Student> getStudentById(int id){
-        for(Student x:students){
-            if(id == x.getId()){
-                return Optional.ofNullable(x);
-            }
-        }
-        return Optional.empty();
+    public Optional<Student> getStudentById(int id) {
+        return students.stream().filter(student -> student.getId() == id).findAny();
     }
 }
