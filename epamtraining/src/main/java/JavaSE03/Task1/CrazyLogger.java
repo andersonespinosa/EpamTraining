@@ -13,11 +13,11 @@ public class CrazyLogger {
     private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-mm-YYYY : hh-mm - ");
 
     private void log(String str) {
-        logger.append(localDateTimeTime.format(dateTimeFormatter) + str + System.getProperty("line.separator"));
+        logger.append(localDateTimeTime.format(dateTimeFormatter)).append(str).append(System.getProperty("line.separator"));
     }
 
     private void printLog() {
-        try (FileOutputStream outputStream = new FileOutputStream("D:\\Java/log.txt");
+        try (FileOutputStream outputStream = new FileOutputStream("epamtraining/src/main/java/JavaSE03/Task1/log.txt");
              OutputStreamWriter writer = new OutputStreamWriter(outputStream)) {
             writer.write(logger.toString());
         } catch (IOException e) {
