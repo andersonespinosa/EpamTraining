@@ -1,7 +1,9 @@
 package JavaSE05.Task1;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,6 +50,31 @@ public class FileManager {
         File newFile = new File(fullPathToFile);
         try {
             newFile.createNewFile();
+            result = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    private boolean deleteFile(String fileName) {
+        Boolean result = false;
+        String fulPathToFile = directoryPath + "\\" + fileName + ".txt";
+        File fileToDelete = new File(fulPathToFile);
+        if (fileToDelete.exists()) {
+            fileToDelete.delete();
+            result = true;
+        }
+        System.out.println("File not found");
+        return result;
+    }
+
+    private boolean editFile(String fileName, String stringToWrite) {
+        Boolean result = false;
+        String fulPathToFile = directoryPath + "\\" + fileName + ".txt";
+        try (FileOutputStream outputStream = new FileOutputStream(fulPathToFile, true);
+             OutputStreamWriter writer = new OutputStreamWriter(outputStream)) {
+            writer.write(stringToWrite);
             result = true;
         } catch (IOException e) {
             e.printStackTrace();
