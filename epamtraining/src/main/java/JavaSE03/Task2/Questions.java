@@ -32,7 +32,7 @@ public class Questions {
 
 
     private void engLocale(BufferedReader bufferedReader) throws IOException {
-        ResourceBundle resourceBundle= ResourceBundle.getBundle("JavaSE03/Task2/BundleResource", Locale.ENGLISH);
+        ResourceBundle resourceBundle= ResourceBundle.getBundle("JavaSE03/BundleResource", Locale.ENGLISH);
         System.out.println("Please input number of question you want to answer for you from 1-3:");
         System.out.println("Question 1 ?");
         System.out.println("Question 2 ?");
@@ -44,7 +44,7 @@ public class Questions {
     }
 
     private void ruLocale(BufferedReader bufferedReader) throws IOException {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("JavaSE03/Task2/BundleResource", Locale.forLanguageTag("RU"));
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("JavaSE03/BundleResource", Locale.forLanguageTag("RU"));
         System.out.println("Пожалуйста введите номер вопроса, чтобы узнать ответ от 1-3:");
         System.out.println("Вопрос 1 ?");
         System.out.println("Вопрос 2 ?");

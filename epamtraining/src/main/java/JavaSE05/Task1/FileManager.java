@@ -1,9 +1,6 @@
 package JavaSE05.Task1;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,12 +8,7 @@ import java.nio.file.Paths;
 public class FileManager {
     private String directoryPath = System.getProperty("user.home");
 
-    /**
-     * Sets the path to desirable directory
-     *
-     * @param path A pathname string
-     */
-    private boolean cd(String path) {
+    public void changeDirectory(String path) {
         Boolean result = false;
         Path pathToDirectory = Paths.get(path);
         if (Files.exists(pathToDirectory)) {
@@ -25,13 +17,10 @@ public class FileManager {
             System.out.println(directoryPath);
         } else
             System.out.println("System could not find path specified");
-        return result;
     }
 
-    /**
-     * Lists all files in current directory
-     */
-    private void ls() {
+
+    public void showAllFilesAndDirectories() {
         File[] filesInDirectory = new File(directoryPath).listFiles();
         if (filesInDirectory != null) {
             for (File aFilesInDirectory : filesInDirectory) {
@@ -44,7 +33,7 @@ public class FileManager {
         }
     }
 
-    private boolean createTextFile(String fileName) {
+    public void createTextFile(String fileName) {
         Boolean result = false;
         String fullPathToFile = directoryPath + "\\" + fileName + ".txt";
         File newFile = new File(fullPathToFile);
@@ -54,23 +43,21 @@ public class FileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
     }
 
-    private boolean deleteFile(String fileName) {
+    public void deleteFile(String fileName) {
         Boolean result = false;
         String fulPathToFile = directoryPath + "\\" + fileName + ".txt";
         File fileToDelete = new File(fulPathToFile);
         if (fileToDelete.exists()) {
             fileToDelete.delete();
             result = true;
+        } else {
+            throw new FileNotFoundException();
         }
-        System.out.println("File not found");
-        return result;
     }
 
-    private boolean editFile(String fileName, String stringToWrite) {
-        Boolean result = false;
+    public void editFile(String fileName, String stringToWrite) {
         String fulPathToFile = directoryPath + "\\" + fileName + ".txt";
         try (FileOutputStream outputStream = new FileOutputStream(fulPathToFile, true);
              OutputStreamWriter writer = new OutputStreamWriter(outputStream)) {
@@ -79,6 +66,5 @@ public class FileManager {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return result;
     }
 }

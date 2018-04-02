@@ -1,5 +1,7 @@
 package JavaSE04.Task1;
 
+import com.sun.org.apache.xerces.internal.xs.StringList;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,43 +15,39 @@ import java.util.Collections;
 import java.util.List;
 
 public class KeywordParser {
-    private Path codeFile = Paths.get("D:\\Java\\JavaCode.txt");
-    private Path keywordsFile = Paths.get("D:\\Java\\JavaKeywords.txt");
-    private List<String> codeFileWords = new ArrayList<>();
-    private List<String> keywordsFileWords = new ArrayList<>();
-    private List<String> foundKeywords = new ArrayList<>();
+//    private Path codeFile = Paths.get("D:\\Java\\JavaCode.txt");
+//    private Path keywordsFile = Paths.get("D:\\Java\\JavaKeywords.txt");
+//    private List<String> codeFileWords = new ArrayList<>();
+//    private List<String> keywordsFileWords = new ArrayList<>();
+//    private List<String> foundKeywords = new ArrayList<>();
 
-    public static void main(String[] args) {
-        KeywordParser parser = new KeywordParser();
-        parser.parseFile(parser.codeFile, parser.codeFileWords);
-        parser.parseFile(parser.keywordsFile, parser.keywordsFileWords);
-        parser.searchForKeywords();
-        for(String keyword : parser.foundKeywords){
-            System.out.println(keyword);
-        }
-
-    }
-
-    private void parseFile(Path pathToFile, List parsedStrings) {
-        try (InputStream in = Files.newInputStream(pathToFile);
+    public List<String> parseFile(String filePath) {
+        List<String> codeFileWords = new ArrayList<>();
+        Path codeFilePath = Paths.get(filePath);
+        try (InputStream in = Files.newInputStream(codeFilePath);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                Collections.addAll(parsedStrings, line.split(" "));
+                codeFileWords.add(line);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return codeFileWords;
     }
 
-    private void searchForKeywords() {
-        for (String codeFileWord : codeFileWords) {
+    public List<String> searchForKeywords(List<String> parsedFileStrings) {
+        List<String> keywordsFileWords = new ArrayList<>();//add file JavaKeywords
+        List<String> foundKeywords = new ArrayList<>();
+
+        for (String codeFileWord : parsedFileStrings) {
             for (String keywordsFileWord : keywordsFileWords) {
                 if (codeFileWord.equals(keywordsFileWord)) {
                     foundKeywords.add(keywordsFileWord);
                 }
             }
         }
+        return foundKeywords;
     }
 
 

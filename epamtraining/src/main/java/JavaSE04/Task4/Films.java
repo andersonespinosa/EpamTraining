@@ -53,18 +53,18 @@ public class Films implements Serializable {
         return result;
     }
 
-    public boolean addFilmAndActors(String filmName, List<String> actors){
+    public boolean addFilmAndActors(String filmName, List<String> actors) {
         boolean result = false;
-        if(filmName != null && !filmsToActors.containsKey(filmName)){
+        if (filmName != null && !filmsToActors.containsKey(filmName)) {
             filmsToActors.put(filmName, actors);
             result = true;
         }
         return result;
     }
 
-    public boolean addFilm(String filmName){
+    public boolean addFilm(String filmName) {
         boolean result = false;
-        if (filmName != null && !filmsToActors.containsKey(filmName)){
+        if (filmName != null && !filmsToActors.containsKey(filmName)) {
             filmsToActors.put(filmName, new ArrayList<String>());
             result = true;
         }

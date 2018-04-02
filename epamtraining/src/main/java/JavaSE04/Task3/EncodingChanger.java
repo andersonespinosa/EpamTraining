@@ -8,7 +8,7 @@ public class EncodingChanger {
         encodingChanger.changeEncoding();
     }
 
-    private void changeEncoding() {
+    public void changeEncoding() {
 
 
         try {
