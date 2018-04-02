@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Films implements Serializable {
-    private Map<String, List<String>> filmsToActors = new HashMap<>();
+    private Map<String, List<String>> filmsToActors;
 
     public Films(Map<String, List<String>> filmsToActors) {
         this.filmsToActors = filmsToActors;
