@@ -19,7 +19,7 @@ public class PropertyReader {
             Properties properties = new Properties();
             properties.load(inputStream);
             String property = properties.getProperty(key);
-            propertyMap.put(property, "");
+            propertyMap.put(key, property);
         } catch (IOException e) {
             throw new RuntimeException("File or property could not be found", e);
         }
