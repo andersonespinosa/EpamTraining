@@ -1,17 +1,19 @@
 package javase05.task2;
 
-import java.nio.file.Path;
-import java.util.ResourceBundle;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
 
 public class PropertyReader {
 
-    public void getProperty(Path path, String key) {
-        try {
-            String stringPath = path.toString();
-            ResourceBundle resourceBundle = ResourceBundle.getBundle(stringPath);
-            resourceBundle.getString(key);
-        } catch (IllegalArgumentException e) {
-            throw new RuntimeException("Wrong file path or property key", e);
+    public String getProperty(String path, String key) {
+        try (InputStream inputStream = new FileInputStream(path)) {
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            return properties.getProperty(key);
+        } catch (IOException e) {
+            throw new RuntimeException("File or property could not be found", e);
         }
     }
 }
