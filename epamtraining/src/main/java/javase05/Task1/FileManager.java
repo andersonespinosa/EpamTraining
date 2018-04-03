@@ -1,4 +1,4 @@
-package javase05.Task1;
+package javase05.task1;
 
 import java.io.*;
 import java.nio.file.Files;
