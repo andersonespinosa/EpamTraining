@@ -1,10 +1,12 @@
 package javase08.task1;
 
+import javase08.task1.exception.DatabaseException;
+import javase08.task1.exception.Messages;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MySQLUserDAO {
+public class MySqlUserDao {
 
     private static final String SQL_GET_USER_BY_ID = "SELECT id, name, surname FROM users HAVING id = ?";
     private static final String SQL_GET_ALL_USERS = "SELECT id, name, surname FROM users";
@@ -12,7 +14,7 @@ public class MySQLUserDAO {
     private static final String SQL_ADD_USER = "INSERT INTO users (id, name, surname) VALUES (?, ?, ?)";
     private static final String dbUrl = "jdbc:mysql://localhost:3306/Users?useSSL=false";
 
-    public User getUserById(int userId) {
+    public User getUserById(int userId) throws DatabaseException {
         User user = null;
         try (
                 Connection con = DriverManager.getConnection(dbUrl, "root", "root");
@@ -23,12 +25,12 @@ public class MySQLUserDAO {
                 user = extractUser(resultSet);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot obtain user from DB", e);
+            throw new DatabaseException(Messages.CANNOT_OBTAIN_USER, e);
         }
         return user;
     }
 
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers() throws DatabaseException {
         User user;
         List<User> userList = new ArrayList<>();
         try (
@@ -41,12 +43,12 @@ public class MySQLUserDAO {
                 userList.add(user);
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot obtain user from DB", e);
+            throw new DatabaseException(Messages.CANNOT_OBTAIN_USER, e);
         }
         return userList;
     }
 
-    public void addUser(int userId, String name, String surname){
+    public void addUser(int userId, String name, String surname) throws DatabaseException {
         try (
                 Connection con = DriverManager.getConnection(dbUrl, "root", "root");
                 PreparedStatement preparedStatement = createPreparedStatementAddUser(con, userId, name, surname);
@@ -54,18 +56,18 @@ public class MySQLUserDAO {
         ) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot add user to DB", e);
+            throw new DatabaseException(Messages.CANNOT_INSERT_USER, e);
         }
     }
 
-    public void deleteUsersTable(){
+    private void deleteUsersTable() throws DatabaseException {
         try(
                 Connection con = DriverManager.getConnection(dbUrl, "root", "root");
                 PreparedStatement preparedStatement = con.prepareStatement(SQL_DELETE_USERS_TABLE);
         ) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException("Cannot drop table", e);
+            throw new DatabaseException(Messages.CANNOT_DROP_TABLE, e);
         }
     }
 
