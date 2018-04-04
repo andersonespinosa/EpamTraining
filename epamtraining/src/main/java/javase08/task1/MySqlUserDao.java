@@ -13,11 +13,13 @@ public class MySqlUserDao {
     private static final String SQL_DELETE_USERS_TABLE = "DROP TABLE users";
     private static final String SQL_ADD_USER = "INSERT INTO users (id, name, surname) VALUES (?, ?, ?)";
     private static final String dbUrl = "jdbc:mysql://localhost:3306/Users?useSSL=false";
+    private static final String dbUser = "root";
+    private static final String dbPass = "root";
 
     public User getUserById(int userId) throws DatabaseException {
         User user = null;
         try (
-                Connection con = DriverManager.getConnection(dbUrl, "root", "root");
+                Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
                 PreparedStatement preparedStatement = createPreparedStatementGetUser(con, userId);
                 ResultSet resultSet = preparedStatement.executeQuery()
         ) {
@@ -34,7 +36,7 @@ public class MySqlUserDao {
         User user;
         List<User> userList = new ArrayList<>();
         try (
-                Connection con = DriverManager.getConnection(dbUrl, "root", "root");
+                Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
                 PreparedStatement preparedStatement = con.prepareStatement(SQL_GET_ALL_USERS);
                 ResultSet resultSet = preparedStatement.executeQuery()
         ) {
@@ -50,7 +52,7 @@ public class MySqlUserDao {
 
     public void addUser(int userId, String name, String surname) throws DatabaseException {
         try (
-                Connection con = DriverManager.getConnection(dbUrl, "root", "root");
+                Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
                 PreparedStatement preparedStatement = createPreparedStatementAddUser(con, userId, name, surname);
 
         ) {
@@ -62,7 +64,7 @@ public class MySqlUserDao {
 
     private void deleteUsersTable() throws DatabaseException {
         try(
-                Connection con = DriverManager.getConnection(dbUrl, "root", "root");
+                Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
                 PreparedStatement preparedStatement = con.prepareStatement(SQL_DELETE_USERS_TABLE);
         ) {
             preparedStatement.executeUpdate();
