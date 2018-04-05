@@ -2,16 +2,16 @@ package javase08.task1;
 
 public class User {
 
-    private Long id;
+    private Long userId;
     private String name;
     private String surname;
 
     public Long getId() {
-        return id;
+        return userId;
     }
 
     public void setId(Long id) {
-        this.id = id;
+        this.userId = id;
     }
 
     public String getName() {
@@ -33,7 +33,7 @@ public class User {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
+                "id=" + userId +
                 ", name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 '}';
