@@ -4,6 +4,7 @@ import javase08.task2.db.dao.BookDao;
 import javase08.task2.db.model.Book;
 import javase08.task2.exception.DaoException;
 import javase08.task2.exception.Messages;
+import lombok.extern.log4j.Log4j2;
 import org.apache.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,8 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Log4j2
 public class MySqlBookDao implements BookDao {
-    private static final Logger LOG = Logger.getLogger(MySqlBookDao.class);
 
     private static final String SQL_INSERT_BOOK = "INSERT INTO books (id, title, author, publishingHouse, pages)"
             + "VALUES (?, ?, ?, ?, ?";
@@ -43,7 +44,7 @@ public class MySqlBookDao implements BookDao {
                 book = extractBook(resultSet);
             }
         } catch (SQLException e) {
-            LOG.error(Messages.CANNOT_OBTAIN_BOOK, e);
+            log.error(Messages.CANNOT_OBTAIN_BOOK, e);
             throw new DaoException(Messages.CANNOT_OBTAIN_BOOK, e);
         } finally {
             MySqlDaoFactory.close(con, preparedStatement, resultSet);
@@ -69,7 +70,7 @@ public class MySqlBookDao implements BookDao {
                 bookList.add(book);
             }
         } catch (SQLException e) {
-            LOG.error(Messages.CANNOT_OBTAIN_BOOK, e);
+            log.error(Messages.CANNOT_OBTAIN_BOOK, e);
             throw new DaoException(Messages.CANNOT_OBTAIN_BOOK, e);
         } finally {
             MySqlDaoFactory.close(con, preparedStatement, resultSet);
