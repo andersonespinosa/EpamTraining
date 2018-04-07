@@ -1,11 +1,13 @@
 package javase08.task2.db.dao.mysql;
 
+import javase08.task2.connection.ConnectionFactory;
+import javase08.task2.connection.ConnectionPool;
+import javase08.task2.connection.PooledConnection;
 import javase08.task2.db.dao.BookDao;
 import javase08.task2.db.model.Book;
 import javase08.task2.exception.DaoException;
 import javase08.task2.exception.Messages;
 import lombok.extern.log4j.Log4j2;
-import org.apache.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +17,7 @@ import java.util.List;
 
 @Log4j2
 public class MySqlBookDao implements BookDao {
+    private ConnectionPool connectionPool = new ConnectionPool();
 
     private static final String SQL_INSERT_BOOK = "INSERT INTO books (id, title, author, publishingHouse, pages)"
             + "VALUES (?, ?, ?, ?, ?";
@@ -31,12 +34,11 @@ public class MySqlBookDao implements BookDao {
     @Override
     public Book getBookById(Long id) throws DaoException {
         Book book = null;
-        Connection con = null;
+        PooledConnection con = connectionPool.get();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
-            con = MySqlDaoFactory.getConnection();
             preparedStatement = con.prepareStatement(SQL_GET_BOOK_BY_ID);
             preparedStatement.setLong(1, id);
             resultSet = preparedStatement.executeQuery();
@@ -47,21 +49,45 @@ public class MySqlBookDao implements BookDao {
             log.error(Messages.CANNOT_OBTAIN_BOOK, e);
             throw new DaoException(Messages.CANNOT_OBTAIN_BOOK, e);
         } finally {
-            MySqlDaoFactory.close(con, preparedStatement, resultSet);
+            ConnectionFactory.close(resultSet, preparedStatement, con);
         }
         return book;
+    }
+
+    public List<Book>getAllBooks() throws DaoException {
+        Book book = null;
+        List<Book> bookList = new ArrayList<>();
+        PooledConnection con = connectionPool.get();
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            con = connectionPool.get();
+            preparedStatement = con.prepareStatement(SQL_GET_ALL_BOOKS);
+            resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                book = extractBook(resultSet);
+                bookList.add(book);
+            }
+        } catch (SQLException e) {
+            log.error(Messages.CANNOT_OBTAIN_BOOK, e);
+            throw new DaoException(Messages.CANNOT_OBTAIN_BOOK, e);
+        } finally {
+            ConnectionFactory.close(resultSet, preparedStatement, con);
+        }
+        return bookList;
     }
 
     @Override
     public List<Book> getBookByTitle(String title) throws DaoException {
         Book book = null;
         List<Book> bookList = new ArrayList<>();
-        Connection con = null;
+        PooledConnection con = connectionPool.get();
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
-            con = MySqlDaoFactory.getConnection();
+            con = connectionPool.get();
             preparedStatement = con.prepareStatement(SQL_GET_BOOK_BY_TITLE);
             preparedStatement.setString(1, title);
             resultSet = preparedStatement.executeQuery();
@@ -73,13 +99,13 @@ public class MySqlBookDao implements BookDao {
             log.error(Messages.CANNOT_OBTAIN_BOOK, e);
             throw new DaoException(Messages.CANNOT_OBTAIN_BOOK, e);
         } finally {
-            MySqlDaoFactory.close(con, preparedStatement, resultSet);
+            ConnectionFactory.close(resultSet, preparedStatement, con);
         }
         return bookList;
     }
 
     @Override
-    public void insertBook(Connection con, Book book) throws SQLException {
+    public void insertBook(PooledConnection con, Book book) throws SQLException {
         PreparedStatement preparedStatement = null;
         try{
             preparedStatement = con.prepareStatement(SQL_INSERT_BOOK);
@@ -91,13 +117,13 @@ public class MySqlBookDao implements BookDao {
             preparedStatement.setInt(k, book.getPages());
             preparedStatement.executeUpdate();
         } finally {
-            MySqlDaoFactory.close(preparedStatement);
+            ConnectionFactory.close(preparedStatement);
         }
 
     }
 
     @Override
-    public void updateBook(Connection con, Book book) throws SQLException {
+    public void updateBook(PooledConnection con, Book book) throws SQLException {
         PreparedStatement preparedStatement = null;
         try{
             preparedStatement = con.prepareStatement(SQL_UPDATE_BOOK);
@@ -109,7 +135,7 @@ public class MySqlBookDao implements BookDao {
             preparedStatement.setLong(k, book.getId());
             preparedStatement.executeUpdate();
         } finally {
-            MySqlDaoFactory.close(preparedStatement);
+            ConnectionFactory.close(preparedStatement);
         }
 
     }
