@@ -52,7 +52,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.6</version>
+            <version>LATEST</version>
         </dependency>
 
         <dependency>
@@ -73,6 +73,12 @@
             <artifactId>lombok</artifactId>
             <version>LATEST</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.vavr</groupId>
+            <artifactId>vavr</artifactId>
+            <version>LATEST</version>
         </dependency>
 
 
