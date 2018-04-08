@@ -5,4 +5,4 @@ public enum Subjects {
     BIOLOGY,
     CHEMISTRY,
     HISTORY
-    }
+}

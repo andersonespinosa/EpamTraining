@@ -7,10 +7,10 @@ import java.util.regex.Pattern;
 
 public class PictureParser {
 
-    public static void main(String[] args) {
+    public void parseImages() {
         Pattern pattern = Pattern.compile("(?ui)^.+(?= )\\((рис(.|унок) [0-9](-[а-я]+)+?)+\\).*$");
 
-        try (Scanner scanner = new Scanner(new File("C:\\Users\\zeux\\IdeaProjects\\EpamTraining\\epamtraining\\src\\main\\java\\javase03\\task3\\Article.html"))) {
+        try (Scanner scanner = new Scanner(new File("Article.html"))) {
             while (scanner.hasNextLine()) {
                 String str = scanner.findInLine(pattern);
                 System.out.println(str);
@@ -19,7 +19,5 @@ public class PictureParser {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }

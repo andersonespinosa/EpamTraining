@@ -26,11 +26,8 @@ public class ConnectionFactory implements Supplier<Connection> {
     String user;
     String password;
 
-    @Getter(PUBLIC)
-    int poolSize;
-
-    @Getter(PUBLIC)
-    String initScriptsPath;
+    /*@Getter(PUBLIC)
+    int poolSize;*/
 
     @Override
     @SneakyThrows
