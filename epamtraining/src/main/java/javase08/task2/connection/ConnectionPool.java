@@ -7,63 +7,61 @@ import lombok.ToString;
 import lombok.experimental.FieldDefaults;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.function.Supplier;
+
 import static lombok.AccessLevel.PRIVATE;
 
 @ToString
 @AllArgsConstructor
 @FieldDefaults(level = PRIVATE)
-public class ConnectionPool implements Supplier<Connection>, Closeable {
+public class ConnectionPool {
 
     String driver = "com.mysql.jdbc.Driver";
-    String url = "jdbc:mysql://localhost:3306/Books?useSSL=false";
+    String url = "jdbc:mysql://localhost:3306/Books?useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
     String user = "root";
-    String password = "root";
+    String pass = "root";
     int poolSize = 10;
 
-    final BlockingQueue<PooledConnection> connectionQueue;
-    volatile boolean opened;
+    final Queue<Connection> connectionQueue;
 
-    @SneakyThrows
     public ConnectionPool() {
-
-        ConnectionFactory connectionFactory = new ConnectionFactory(driver, url, user, password);
-        connectionQueue = new ArrayBlockingQueue<>(poolSize);
+        ConnectionFactory connectionFactory = new ConnectionFactory(driver, url, user, pass);
+        connectionQueue = new LinkedList<Connection>();
         for (int i = 0; i < poolSize; i++) {
-            PooledConnection pooledConnection = (PooledConnection) connectionFactory.get();
-            connectionQueue.add(pooledConnection);
+            Connection connection = connectionFactory.get();
+            connectionQueue.add(connection);
         }
+    }
+
+    public Connection getConnection() {
+        return connectionQueue.poll();
 
     }
 
-    @Override
-    public PooledConnection get() {
-        return takeConnection();
+    public void closeConnection(Connection connection) {
+        if (connection != null) {
+            connectionQueue.add(connection);
+        }
     }
 
-    @Override
+    /*@Override
     public void close() {
         opened = false;
         connectionQueue.forEach(PooledConnection::reallyClose);
-    }
+    }*/
 
-    private PooledConnection takeConnection() {
-        try {
-            return connectionQueue.take();
-        } catch (InterruptedException e) {
-            throw new ConnectionPoolException(
-                    "Error connecting to the data source.", e);
-        }
-    }
-
-    @SneakyThrows
+    /*@SneakyThrows
     private void closePooledConnection(PooledConnection connection) {
         if (opened) {
-            if (connection.isClosed())
                 throw new RuntimeException("Attempting to close closed connection.");
             if (connection.isReadOnly())
                 connection.setReadOnly(false);
@@ -71,6 +69,5 @@ public class ConnectionPool implements Supplier<Connection>, Closeable {
                 throw new SQLException("Error allocating connection in the pool.");
         } else
             connection.reallyClose();
-    }
-
+    }*/
 }
