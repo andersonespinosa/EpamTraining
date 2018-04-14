@@ -2,6 +2,7 @@ package javase08.task1;
 
 import javase08.task1.exception.DatabaseException;
 import javase08.task1.exception.Messages;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +13,14 @@ public class MySqlUserDao {
     private static final String SQL_GET_ALL_USERS = "SELECT id, name, surname FROM users";
     private static final String SQL_DELETE_USERS_TABLE = "DROP TABLE users";
     private static final String SQL_ADD_USER = "INSERT INTO users (id, name, surname) VALUES (?, ?, ?)";
-    private static final String dbUrl = "jdbc:mysql://localhost:3306/Users?useSSL=false";
-    private static final String dbUser = "root";
-    private static final String dbPass = "root";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/Users?useSSL=false";
+    private static final String DB_USER = "root";
+    private static final String DB_PASS = "root";
 
     public User getUserById(int userId) throws DatabaseException {
         User user = null;
         try (
-                Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
+                Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
                 PreparedStatement preparedStatement = createPreparedStatementGetUser(con, userId);
                 ResultSet resultSet = preparedStatement.executeQuery()
         ) {
@@ -33,14 +34,14 @@ public class MySqlUserDao {
     }
 
     public List<User> getAllUsers() throws DatabaseException {
-        User user;
         List<User> userList = new ArrayList<>();
         try (
-                Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
+                Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
                 PreparedStatement preparedStatement = con.prepareStatement(SQL_GET_ALL_USERS);
                 ResultSet resultSet = preparedStatement.executeQuery()
         ) {
             if (resultSet.next()) {
+                User user;
                 user = extractUser(resultSet);
                 userList.add(user);
             }
@@ -50,10 +51,13 @@ public class MySqlUserDao {
         return userList;
     }
 
-    public void addUser(int userId, String name, String surname) throws DatabaseException {
+    public void addUser(User userToAdd) throws DatabaseException {
+        int userId = userToAdd.getId();
+        String name = userToAdd.getName();
+        String surname = userToAdd.getSurname();
         try (
-                Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
-                PreparedStatement preparedStatement = createPreparedStatementAddUser(con, userId, name, surname);
+                Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
+                PreparedStatement preparedStatement = createPreparedStatementAddUser(con, userToAdd)
 
         ) {
             preparedStatement.executeUpdate();
@@ -63,8 +67,8 @@ public class MySqlUserDao {
     }
 
     private void deleteUsersTable() throws DatabaseException {
-        try(
-                Connection con = DriverManager.getConnection(dbUrl, dbUser, dbPass);
+        try (
+                Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
                 PreparedStatement preparedStatement = con.prepareStatement(SQL_DELETE_USERS_TABLE);
         ) {
             preparedStatement.executeUpdate();
@@ -75,7 +79,7 @@ public class MySqlUserDao {
 
     private User extractUser(ResultSet rs) throws SQLException {
         User user = new User();
-        user.setId(rs.getLong("id"));
+        user.setId(rs.getInt("id"));
         user.setName(rs.getString("name"));
         user.setSurname(rs.getString("surname"));
         return user;
@@ -87,9 +91,11 @@ public class MySqlUserDao {
         return ps;
     }
 
-    private PreparedStatement createPreparedStatementAddUser(Connection con, int userId,
-                                                             String name, String surname) throws SQLException {
+    private PreparedStatement createPreparedStatementAddUser(Connection con, User user) throws SQLException {
         PreparedStatement ps = con.prepareStatement(SQL_ADD_USER);
+        int userId = user.getId();
+        String name = user.getName();
+        String surname = user.getSurname();
         ps.setInt(1, userId);
         ps.setString(2, name);
         ps.setString(3, surname);

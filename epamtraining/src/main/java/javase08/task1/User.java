@@ -2,15 +2,15 @@ package javase08.task1;
 
 public class User {
 
-    private Long userId;
+    private int userId;
     private String name;
     private String surname;
 
-    public Long getId() {
+    public int getId() {
         return userId;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.userId = id;
     }
 
