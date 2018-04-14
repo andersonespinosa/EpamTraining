@@ -6,9 +6,10 @@ public class Task2 {
         double maxValue = 0.005;
         Task2 task = new Task2();
         System.out.println("Minimal value is: " + String.format("%.4f", task.getMinValue(maxValue)));
+
     }
 
-    private double getMinValue(double maxValue){
+    public double getMinValue(double maxValue){
         int count = 0;
         double[] array = new double[25];
         do {

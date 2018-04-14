@@ -5,7 +5,6 @@ import javase08.task2.db.dao.DaoFactory;
 import javase08.task2.exception.DaoException;
 import javase08.task2.exception.Messages;
 import lombok.extern.log4j.Log4j2;
-import org.apache.log4j.Logger;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;

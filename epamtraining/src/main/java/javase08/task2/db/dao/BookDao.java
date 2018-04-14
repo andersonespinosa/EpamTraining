@@ -14,8 +14,8 @@ public interface BookDao {
 
     List<Book> getBookByTitle(String title) throws DaoException;
 
-    void insertBook(PooledConnection con, Book book) throws SQLException;
+    void insertBook(Connection con, Book book) throws SQLException;
 
-    void updateBook(PooledConnection con, Book book) throws SQLException;
+    void updateBook(Connection con, Book book) throws SQLException;
 
 }

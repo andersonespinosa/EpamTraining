@@ -1,106 +1,67 @@
 package javase08.task2.connection;
 
-import io.vavr.CheckedFunction1;
-import io.vavr.Function2;
 import javase08.task2.exception.ConnectionPoolException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.experimental.FieldDefaults;
-import lombok.val;
 
 import java.io.Closeable;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Optional;
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-import static javase08.task2.connection.PropertyReader.getFromProperties;
 import static lombok.AccessLevel.PRIVATE;
 
 @ToString
 @AllArgsConstructor
 @FieldDefaults(level = PRIVATE)
-public class ConnectionPool implements Supplier<Connection>, Closeable {
+public class ConnectionPool {
 
-    final BlockingQueue<PooledConnection> connectionQueue;
-    volatile boolean opened;
+    String driver = "com.mysql.jdbc.Driver";
+    String url = "jdbc:mysql://localhost:3306/Books?useSSL=false&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+    String user = "root";
+    String pass = "root";
+    int poolSize = 10;
 
-    @SneakyThrows
+    final Queue<Connection> connectionQueue;
+
     public ConnectionPool() {
-
-        ConnectionFactory connectionFactory = getFromProperties(ConnectionFactory.class, "db");
-
-        Function<Connection, PooledConnection> pooledConnectionFactory = Function2.narrow(
-                PooledConnection::new)
-                .apply(this::closePooledConnection);
-
-        int poolSize = connectionFactory.getPoolSize();
-        connectionQueue = IntStream.range(0, poolSize)
-                .mapToObj(__ -> connectionFactory.get())
-                .map(pooledConnectionFactory)
-                .collect(Collectors.toCollection(() -> new ArrayBlockingQueue<>(poolSize)));
-
-        Function<String, Optional<String>> getFileAsString = Function2.narrow(
-                ConnectionPool::getFileAsString)
-                .apply(connectionFactory.getInitScriptsPath());
-
-        try (Connection connection = get();
-             val statement = connection.createStatement()) {
-            statement.executeUpdate(
-                    IntStream.iterate(1, operand -> operand + 1)
-                            .mapToObj(String::valueOf)
-                            .map(getFileAsString)
-                            .takeWhile(Optional::isPresent)
-                            .map(Optional::get)
-                            .collect(Collectors.joining()));
+        ConnectionFactory connectionFactory = new ConnectionFactory(driver, url, user, pass);
+        connectionQueue = new LinkedList<Connection>();
+        for (int i = 0; i < poolSize; i++) {
+            Connection connection = connectionFactory.get();
+            connectionQueue.add(connection);
         }
     }
 
-    public PooledConnection takeConnection() {
-        try {
-            return connectionQueue.take();
-        } catch (InterruptedException e) {
-            throw new ConnectionPoolException(
-                    "Error connecting to the data source.", e);
+    public Connection getConnection() {
+        return connectionQueue.poll();
+
+    }
+
+    public void closeConnection(Connection connection) {
+        if (connection != null) {
+            connectionQueue.add(connection);
         }
     }
 
-    @Override
-    public PooledConnection get() {
-        return takeConnection();
-    }
-
-    @Override
+    /*@Override
     public void close() {
         opened = false;
         connectionQueue.forEach(PooledConnection::reallyClose);
-    }
+    }*/
 
-    @SneakyThrows
-    private static Optional<String> getFileAsString(String initScriptsPath, String name) {
-        val path = String.format("/%s/%s.sql", initScriptsPath, name);
-        return Optional.ofNullable(ConnectionPool.class.getResource(path))
-                .map(CheckedFunction1.narrow(URL::toURI).unchecked())
-                .map(Paths::get)
-                .map(CheckedFunction1.<Path, Stream<String>>narrow(Files::lines).unchecked())
-                .map(stringStream -> stringStream.collect(Collectors.joining()));
-    }
-
-    @SneakyThrows
+    /*@SneakyThrows
     private void closePooledConnection(PooledConnection connection) {
         if (opened) {
-            if (connection.isClosed())
                 throw new RuntimeException("Attempting to close closed connection.");
             if (connection.isReadOnly())
                 connection.setReadOnly(false);
@@ -108,6 +69,5 @@ public class ConnectionPool implements Supplier<Connection>, Closeable {
                 throw new SQLException("Error allocating connection in the pool.");
         } else
             connection.reallyClose();
-    }
-
+    }*/
 }
