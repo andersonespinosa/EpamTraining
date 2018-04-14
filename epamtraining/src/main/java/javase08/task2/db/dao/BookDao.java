@@ -1,6 +1,5 @@
 package javase08.task2.db.dao;
 
-import javase08.task2.connection.PooledConnection;
 import javase08.task2.db.model.Book;
 import javase08.task2.exception.DaoException;
 

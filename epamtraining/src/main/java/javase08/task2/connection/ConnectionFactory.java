@@ -24,9 +24,6 @@ public class ConnectionFactory implements Supplier<Connection> {
     String user = "root";
     String pass = "root";
 
-    /*@Getter(PUBLIC)
-    int poolSize;*/
-
     @Override
     @SneakyThrows
     public Connection get() {
@@ -36,13 +33,6 @@ public class ConnectionFactory implements Supplier<Connection> {
         }
         return DriverManager.getConnection(url, user, pass);
     }
-
-    /*public static void close(PooledConnection con) {
-        if (con != null) {
-                con.close();
-        } else
-            log.info("PolledConnection in null");
-    }*/
 
     public static void close(Statement statement) {
         if (statement != null) {

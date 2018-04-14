@@ -2,7 +2,6 @@ package javase08.task2.db.dao.mysql;
 
 import javase08.task2.connection.ConnectionFactory;
 import javase08.task2.connection.ConnectionPool;
-import javase08.task2.connection.PooledConnection;
 import javase08.task2.db.dao.BookDao;
 import javase08.task2.db.model.Book;
 import javase08.task2.exception.DaoException;
