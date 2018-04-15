@@ -28,7 +28,7 @@ public class SynchronizedPropertyReader {
         } catch (IOException e) {
             throw new RuntimeException("File or property could not be found", e);
         } finally {
-            lock.lock();
+            lock.unlock();
         }
     }
 }
