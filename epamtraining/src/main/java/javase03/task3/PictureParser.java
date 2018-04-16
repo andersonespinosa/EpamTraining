@@ -1,23 +1,34 @@
 package javase03.task3;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Scanner;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PictureParser {
 
     public void parseImages() {
-        Pattern pattern = Pattern.compile("(?ui)^.+(?= )\\((рис(.|унок) [0-9](-[а-я]+)+?)+\\).*$");
+        String stringPath = "Article.html";
+        Path path = Paths.get(stringPath);
+        Pattern pattern = Pattern.compile("(рис.)");
 
-        try (Scanner scanner = new Scanner(new File("Article.html"))) {
-            while (scanner.hasNextLine()) {
-                String str = scanner.findInLine(pattern);
-                System.out.println(str);
+        try (InputStream in = Files.newInputStream(path);
+             BufferedReader reader = new BufferedReader(new InputStreamReader(in, "Cp1251"))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                Matcher matcher = pattern.matcher(line);
+                if(matcher.find()){
+                    System.out.println(line);
+                }
             }
-
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("IO Exception", e);
         }
     }
 }
